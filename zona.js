@@ -103,7 +103,7 @@ const readZonaById = (request, response) => {
 
 const updateZona = (request, response) => {
     const id = parseInt(request.params.id)
-    const {zona,remarks,zona_type_id,authority,type_of_shape} = request.body
+    const {zona,remarks,zona_type_id,authority,type_of_shape,speed_limit} = request.body
     // select data first
     pool.query('SELECT * FROM tbl_marlens_zona WHERE id=$1', [id],(error, results) => {
       if (error) {
@@ -112,7 +112,7 @@ const updateZona = (request, response) => {
       }
       if (results.rowCount >0){
         var update_time = new Date
-        pool.query('UPDATE tbl_marlens_zona set zona=$1,remarks=$2,type_of_zone=$3,authority=$4,type_of_shape=$5,updated_at=$6 WHERE id=$7', [zona,remarks,zona_type_id,authority,type_of_shape,update_time,id], (error, results) => {
+        pool.query('UPDATE tbl_marlens_zona set zona=$1,remarks=$2,type_of_zone=$3,authority=$4,type_of_shape=$5,updated_at=$6,speed_limit=$7 WHERE id=$8', [zona,remarks,zona_type_id,authority,type_of_shape,update_time,speed_limit,id], (error, results) => {
           if (error) {
             response.status(400).send({success:false,data: error})
             return;

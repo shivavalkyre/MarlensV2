@@ -124,6 +124,25 @@ app.get('/api/V2/marlens/typeofshape/read/:id', dbTypeofshapeMarlens.readTypeofs
 app.put('/api/V2/marlens/typeofshape/update/:id', dbTypeofshapeMarlens.updateTypeofshape);
 app.delete('/api/V2/marlens/typeofshape/delete/:id', dbTypeofshapeMarlens.deleteTypeofshape);
 //============================== type of shape ===========================
+const dbAIS = require('./ais')
+// ============================= AIS ================================================
+app.post('/api/V2/marlens/ais/read',dbAIS.readAISMessage);
+// ===================================================================================
+
+// stake holder
+const stakeholder = require ('./stakeholder');
+// ================================= STAKEHOLDER ============================
+app.get('/api/V2/marlens/stakeholder',stakeholder.read);
+app.get('/api/V2/marlens/stakeholder/:id', stakeholder.read_by_id);
+app.post('/api/V2/marlens/stakeholder',stakeholder.read);
+// ==========================================================================
+
+// navigation status
+const dbAisStatusNavigation = require('./ais_status_navigation')
+
+app.get('/api/ais_status_navigaion/',dbAisStatusNavigation.getAISStatusNavigation);
+app.get('/api/ais_status_navigaion/:id',dbAisStatusNavigation.getAISStatusNavigationById);
+
 // authentification part======================================================
 
 function authenticateToken(req, res, next) {
