@@ -55,7 +55,7 @@ app.post('/api/V2/marlens/user', user.create);
 app.get('/api/V2/marlens/user/all', authenticateToken, (req, res) => {
     user.readall(req,res)
 });
-app.post('/api/V2/marlens/user/login', user.read);
+app.post('/api/V2/marlens/user/login', user.login);
 app.put('/api/V2/marlens/user',authenticateToken, (req, res) => {
     user.update(req,res)
 });
@@ -124,6 +124,23 @@ app.get('/api/V2/marlens/typeofshape/read/:id', dbTypeofshapeMarlens.readTypeofs
 app.put('/api/V2/marlens/typeofshape/update/:id', dbTypeofshapeMarlens.updateTypeofshape);
 app.delete('/api/V2/marlens/typeofshape/delete/:id', dbTypeofshapeMarlens.deleteTypeofshape);
 //============================== type of shape ===========================
+const dbShipType = require ('./ship_type')
+// ==================================== Ship Type ===========================
+app.post ('/api/V2/marlens/typeofship',dbShipType.readShipTypeChild)
+// ==========================================================================
+
+const dbShipCategory = require ('./ship_category')
+// ==================================== Ship Category ========================
+app.post('/api/V2/marlens/categoryofship',dbShipCategory.readShipCategory)
+//============================================================================
+const dbAton = require('./aton')
+// ===================================== Aton ================================
+app.post('/api/V2/marlens/aton_type', dbAton.readAtonType);
+app.get('/api/V2/marlens/aton', dbAton.readAton);
+app.get('/api/V2marlens/aton/:id', dbAton.readAtonById);
+// ===========================================================================
+
+
 const dbAIS = require('./ais')
 // ============================= AIS ================================================
 app.post('/api/V2/marlens/ais/read',dbAIS.readAISMessage);
@@ -142,6 +159,8 @@ const dbAisStatusNavigation = require('./ais_status_navigation')
 
 app.get('/api/ais_status_navigaion/',dbAisStatusNavigation.getAISStatusNavigation);
 app.get('/api/ais_status_navigaion/:id',dbAisStatusNavigation.getAISStatusNavigationById);
+
+
 
 // authentification part======================================================
 
