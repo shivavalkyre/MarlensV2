@@ -69,21 +69,21 @@ app.delete('/api/V2/marlens/user/:id',authenticateToken, (req, res) => {
 const dbZonaMarlens = require('./zona')
 //============================= zona  =========================================
 app.post('/api/V2/marlens/zona/create', dbZonaMarlens.createZona);
-app.post('/api/V2/marlens/zona/read', dbZonaMarlens.readZona);
-app.post('/api/V2/marlens/zona/read_except/:id', dbZonaMarlens.readZonaExeptThis);
+app.get('/api/V2/marlens/zona/read', dbZonaMarlens.readZona);
+app.get('/api/V2/marlens/zona/read_except/:id', dbZonaMarlens.readZonaExeptThis);
 app.get('/api/V2/marlens/zona/read/:id', dbZonaMarlens.readZonaById);
 app.put('/api/V2/marlens/zona/update/:id', dbZonaMarlens.updateZona);
 app.delete('/api/V2/marlens/zona/delete/:id', dbZonaMarlens.deleteZona);
 
 app.post('/api/V2/marlens/zona_detail/create', dbZonaMarlens.createZonaDetail);
-app.post('/api/V2/marlens/zona_detail/read', dbZonaMarlens.readZonaDetail);
+app.get('/api/V2/marlens/zona_detail/read', dbZonaMarlens.readZonaDetail);
 app.get('/api/V2/marlens/zona_detail/read/:id', dbZonaMarlens.readZonaDetailById);
 app.get('/api/V2/marlens/zona_detail/readByZona/:id', dbZonaMarlens.readZonaDetailByZonaId);
 app.put('/api/V2/marlens/zona_detail/update/:id', dbZonaMarlens.updateZonaDetail);
 app.delete('/api/V2/marlens/zona_detail/delete/:id', dbZonaMarlens.deleteZonaDetail);
 
 app.post('/api/V2/marlens/zona_type/create', dbZonaMarlens.createZonaType);
-app.post('/api/V2/marlens/zona_type/read', dbZonaMarlens.readZonaType);
+app.get('/api/V2/marlens/zona_type/read', dbZonaMarlens.readZonaType);
 app.get('/api/V2/marlens/zona_type/read/:id', dbZonaMarlens.readZonaTypeById);
 app.put('/api/V2/marlens/zona_type/update/:id', dbZonaMarlens.updateZonaType);
 app.delete('/api/V2/marlens/zona_type/delete/:id', dbZonaMarlens.deleteZonaType);

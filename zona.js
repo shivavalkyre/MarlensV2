@@ -1,10 +1,10 @@
 
 const pool = require('./dbCon');
 
-
+// Zona
 const createZona = (request, response) => {
-    const {zona,remarks,zona_type_id,authority,type_of_shape} = request.body
-    pool.query('INSERT INTO tbl_marlens_zona (zona,remarks,type_of_zone,authority,type_of_shape) VALUES ($1,$2,$3,$4,$5)', [zona,remarks,zona_type_id,authority,type_of_shape], (error, results) => {
+    const {zona,remarks,zona_type_id,authority,type_of_shape,visibility_in_map,speed_limit} = request.body
+    pool.query('INSERT INTO tbl_marlens_zona (zona,remarks,type_of_zone,authority,type_of_shape,visibility_in_map,speed_limit) VALUES ($1,$2,$3,$4,$5,$6,$7)', [zona,remarks,zona_type_id,authority,type_of_shape,visibility_in_map,speed_limit], (error, results) => {
       if (error) {
         if (error.code == '23505')
         {
@@ -43,7 +43,7 @@ const readZona = (request, response) => {
       res.push({total:results.rows[0].total})
       var sql=  'SELECT * FROM tbl_marlens_zona WHERE is_delete=false ORDER BY id ASC'
       pool.query(
-       sql,
+      sql,
         (error, results) => {
           if (error) {
             response.status(400).send({success:false,data:error})
@@ -73,7 +73,7 @@ const readZonaExeptThis = (request, response) => {
     res.push({total:results.rows[0].total})
     var sql=  'SELECT * FROM tbl_marlens_zona WHERE is_delete=false and id!=$1 ORDER BY id ASC'
     pool.query(
-     sql,[id],
+    sql,[id],
       (error, results) => {
         if (error) {
           response.status(400).send({success:false,data:error})
@@ -103,7 +103,7 @@ const readZonaById = (request, response) => {
 
 const updateZona = (request, response) => {
     const id = parseInt(request.params.id)
-    const {zona,remarks,zona_type_id,authority,type_of_shape,speed_limit} = request.body
+    const {zona,remarks,zona_type_id,authority,type_of_shape,visibility_in_map,speed_limit} = request.body
     // select data first
     pool.query('SELECT * FROM tbl_marlens_zona WHERE id=$1', [id],(error, results) => {
       if (error) {
@@ -112,12 +112,35 @@ const updateZona = (request, response) => {
       }
       if (results.rowCount >0){
         var update_time = new Date
-        pool.query('UPDATE tbl_marlens_zona set zona=$1,remarks=$2,type_of_zone=$3,authority=$4,type_of_shape=$5,updated_at=$6,speed_limit=$7 WHERE id=$8', [zona,remarks,zona_type_id,authority,type_of_shape,update_time,speed_limit,id], (error, results) => {
+        pool.query('UPDATE tbl_marlens_zona set zona=$1,remarks=$2,type_of_zone=$3,authority=$4,type_of_shape=$5,updated_at=$6,speed_limit=$7,visibility_in_map=$9 WHERE id=$8', [zona,remarks,zona_type_id,authority,type_of_shape,update_time,speed_limit,id,visibility_in_map], (error, results) => {
           if (error) {
             response.status(400).send({success:false,data: error})
             return;
           }
-          response.status(200).send({success:true,data:'Update zona success'})
+
+          pool.query('DELETE FROM tbl_marlens_zona_detail where zonaid=$1'
+          , [id], (error, results) => {
+              if (error) {
+
+                  if (error.code == '23505') {
+                      //console.log("\n ERROR! \n Individual with name: " + body.fname + " " + body.lname + " and phone #: " + body.phone + " is a duplicate member. \n");
+                      response.status(400).send('Duplicate data')
+                      return;
+                  }
+              } else {
+                  // response.status(200).send({ success: true, data: 'data berhasil diperbarui' })
+              }
+
+          })
+
+          pool.query('SELECT id FROM tbl_marlens_zona where id=$1 LIMIT 1', [id],  (error, results) => {
+            if (error) 
+            {
+                throw error
+            }
+            response.status(200).send({success:true,data: results.rows[0].id})
+          })
+        // response.status(200).send({success:true,data:'Update zona success'})
       })
       }else{
           response.status(400).send({success:false,data:'Data not found'})
@@ -125,43 +148,50 @@ const updateZona = (request, response) => {
       
   
   })
-   
-  }
+  
+}
 
+const deleteZona = (request, response) => {
+  const id = parseInt(request.params.id)
+  //const {levelid} = request.body
+  pool.query('SELECT * FROM tbl_marlens_zona WHERE id=$1', [id],(error, results) => {
+    if (error) {
+      response.status(400).send({success:false,data: error})
+      return;
+    }
+    
+    if (results.rowCount >0){
+      var delete_time = new Date
+      //var level = results.rows[0].level
+      //var modul = results.rows[0].modul
+      ///console.log(level)
+      ///console.log(modul)
+      pool.query('UPDATE tbl_marlens_zona set deleted_at = $1 ,is_delete = $2  WHERE id = $3', [delete_time,true,id] ,(error1, results1) => {
+        if (error1) {
+          response.status(400).send({success:false,data: error1})
+          return;
+        }
 
-  const deleteZona = (request, response) => {
-    const id = parseInt(request.params.id)
-    //const {levelid} = request.body
-    pool.query('SELECT * FROM tbl_marlens_zona WHERE id=$1', [id],(error, results) => {
-      if (error) {
-        response.status(400).send({success:false,data: error})
-        return;
-      }
-      
-      if (results.rowCount >0){
-        var delete_time = new Date
-        //var level = results.rows[0].level
-        //var modul = results.rows[0].modul
-        ///console.log(level)
-        ///console.log(modul)
-        pool.query('UPDATE tbl_marlens_zona set deleted_at = $1 ,is_delete = $2  WHERE id = $3', [delete_time,true,id] ,(error1, results1) => {
+        pool.query('UPDATE tbl_marlens_zona_detail set deleted_at = $1 ,is_delete = $2  WHERE zonaid = $3', [delete_time,true,id] ,(error1, results1) => {
           if (error1) {
             response.status(400).send({success:false,data: error1})
             return;
           }
-          response.status(200).send({success:true,data:'Delete zona success'})
+  
+        })
+
+        response.status(200).send({success:true,data:'Delete zona success'})
       })
 
-      }else{
-        response.status(400).send({success:false,data:'Data not found'})
-      }
-    })
-   
-  }
+    }else{
+      response.status(400).send({success:false,data:'Data not found'})
+    }
+  })
+  
+}
 
-
-
-  const createZonaDetail = (request, response) => {
+// Zone Detail
+const createZonaDetail = (request, response) => {
     const {zonaid,degree1,minute1,second1,direction1,degree2,minute2,second2,direction2,radius} = request.body
     pool.query('INSERT INTO tbl_marlens_zona_detail (zonaid,degree1,minute1,second1,direction1,degree2,minute2,second2,direction2,radius) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)', [zonaid,degree1,minute1,second1,direction1,degree2,minute2,second2,direction2,radius], (error, results) => {
       if (error) {
@@ -212,9 +242,6 @@ const readZonaDetail = (request, response) => {
     
 }
 
-
-
-
 const readZonaDetailById = (request, response) => {
     const id = parseInt(request.params.id)
 
@@ -240,7 +267,6 @@ const readZonaDetailByZonaId = (request, response) => {
           response.status(200).send({success:true,data:results.rows})
       })
 }
-
 
 const updateZonaDetail = (request, response) => {
     const id = request.params.id
@@ -287,6 +313,8 @@ const deleteZonaDetail = (request, response) => {
   })
 }
 
+
+// Zona Type
 const createZonaType = (request, response) => {
   const {zona_type} = request.body
   pool.query('INSERT INTO tbl_marlens_zona_type (zona_type) VALUES ($1)', [zona_type], (error, results) => {
@@ -301,7 +329,7 @@ const createZonaType = (request, response) => {
       }
     }else{
       
-          response.status(200).send({success:true,data: 'Zona Type inserted'})
+      response.status(200).send({success:true,data: 'Zona Type inserted'})
 
     }
     
@@ -351,7 +379,6 @@ const readZonaTypeById = (request, response) => {
           response.status(200).send({success:true,data:results.rows})
       })
 }
-
 
 const updateZonaType = (request, response) => {
   const id = parseInt(request.params.id)
@@ -428,4 +455,4 @@ module.exports = {
     readZonaTypeById,
     updateZonaType,
     deleteZonaType
-  }
+}
