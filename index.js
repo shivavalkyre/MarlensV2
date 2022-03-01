@@ -91,6 +91,7 @@ app.delete('/api/V2/marlens/zona_type/delete/:id', dbZonaMarlens.deleteZonaType)
 //============================= end zona ======================================
 
 const dbTrappingMarlens = require('./trapping')
+
 // ============================ trapping marlens =========================
 app.post('/api/V2/marlens/trapping/create', dbTrappingMarlens.createTrapping);
 app.post('/api/V2/marlens/trapping/read', dbTrappingMarlens.readTrapping);
