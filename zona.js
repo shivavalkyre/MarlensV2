@@ -259,7 +259,7 @@ const readZonaDetailByZonaId = (request, response) => {
   const id = parseInt(request.params.id)
 
   pool.query(
-      'SELECT d.*,z.type_of_shape FROM tbl_marlens_zona_detail d join tbl_marlens_zona z on z.id = d.zonaid WHERE d.zonaid=$1 and d.is_delete=false order by d.id ASC', [id],
+      'SELECT d.*,z.type_of_shape FROM tbl_marlens_zona_detail d left join tbl_marlens_zona z on z.id = d.zonaid WHERE d.zonaid=$1 and d.is_delete=false order by d.id ASC', [id],
       (error, results) => {
         if (error) {
           response.status(400).send({success:false,data:error})
