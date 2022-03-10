@@ -124,6 +124,21 @@ const updateTrapping = (request, response) => {
 
           })
 
+          pool.query('DELETE FROM tbl_marlens_ship_trapping where trappingid=$1'
+          , [id], (error, results) => {
+              if (error) {
+
+                  if (error.code == '23505') {
+                      //console.log("\n ERROR! \n Individual with name: " + body.fname + " " + body.lname + " and phone #: " + body.phone + " is a duplicate member. \n");
+                      response.status(400).send('Duplicate data')
+                      return;
+                  }
+              } else {
+                  // response.status(200).send({ success: true, data: 'data berhasil diperbarui' })
+              }
+
+          })
+
           pool.query('SELECT id FROM tbl_marlens_trapping where id=$1 LIMIT 1', [id],  (error, results) => {
             if (error) 
             {
