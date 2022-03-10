@@ -47,7 +47,7 @@ const readTrapping = (request, response) => {
       }
       res.push({total:results.rows[0].total})
       // ,row_number() OVER (ORDER BY tbl_marlens_trapping.id) AS row_number
-      var sql=  'SELECT m.id,m.created_at,m.is_active,m.is_visible,m.title, k.ship_name, k.call_sign, k.mmsi, k.gt, j.ship_type FROM tbl_marlens_trapping m left join tbl_masdex_kapal k on m.select_ship = k.id left join tbl_masdex_jenis_kapal j on k.ship_type = j.id WHERE m.is_delete=false and (m.is_active=true or m.is_visible=true) ORDER BY m.id ASC'
+      var sql=  'SELECT m.id,m.created_at,m.is_active,m.is_visible,m.title,m.type_of_shape, k.ship_name, k.call_sign, k.mmsi, k.gt, j.ship_type FROM tbl_marlens_trapping m left join tbl_masdex_kapal k on m.select_ship = k.id left join tbl_masdex_jenis_kapal j on k.ship_type = j.id WHERE m.is_delete=false and (m.is_active=true or m.is_visible=true) ORDER BY m.id ASC'
       pool.query(
        sql,
         (error, results) => {
