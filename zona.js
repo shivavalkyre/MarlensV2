@@ -205,7 +205,15 @@ const createZonaDetail = (request, response) => {
         }
       }else{
 
-            response.status(200).send({success:true,data: 'Entry new data success'})
+        pool.query('SELECT id FROM tbl_marlens_zona_detail ORDER BY id DESC LIMIT 1',  (error, results) => {
+            if (error) 
+            {
+              response.status(400).send({success:false,data: error})
+              return;
+            }
+            response.status(200).send({success:true,data: results.rows[0].id})
+        })
+            // response.status(200).send({success:true,data: 'Entry new data success'})
         
       }
       
